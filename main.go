@@ -1,13 +1,12 @@
 package main
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 )
 
 var Conf *Config
+var etcdService = NewEtcdService(Conf)
 
 func main() {
 	var (
@@ -15,7 +14,8 @@ func main() {
 	)
 	initFlag()
 	Conf = initConfig()
-	etcdService := NewEtcdService(Conf)
+	etcdService = NewEtcdService(Conf)
+
 	if err = etcdService.connection(); err != nil {
 		log.Fatalf("connection etcd error: %v", err)
 	}
@@ -25,22 +25,8 @@ func main() {
 	route.HTMLRender = createHTMLRender()
 
 	route.Static("/static", "./static")
-	route.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "index", nil)
-	})
-
-	route.GET("/machine/create", func(c *gin.Context) {
-	})
-
-	route.GET("/machine/index", func(c *gin.Context) {
-		machines, err := etcdService.GetMachineList()
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Println(machines)
-		c.HTML(http.StatusOK, "machine/index", gin.H{
-			"machines": machines,
-		})
-	})
+	route.GET("/", index())
+	route.GET("/machine/index", machineIndex())
+	route.POST("/machine/store", machineStore())
 	route.Run(":8001")
 }

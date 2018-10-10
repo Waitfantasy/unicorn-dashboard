@@ -52,6 +52,7 @@ func createHTMLRender() multitemplate.Renderer {
 		"./templates/layout/nav.html",
 		"./templates/layout/sidebar.html",
 		"./templates/layout/footer.html",
-		"./templates/machine/index.html", )
+		"./templates/machine/index.html",
+		"./templates/widgets/alter.html",)
 	return r
 }
