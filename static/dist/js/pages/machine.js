@@ -57,4 +57,27 @@ $(function () {
         });
 
     });
+
+    $('#MachineListTable').delegate('.MachineItemDelBtn', 'click', function () {
+        var $this = $(this);
+        var $btn = $(this).button('loading');
+        var ip = $this.attr('data-ip');
+        if (!ip) {
+            $btn.button('reset');
+            return false
+        }
+
+        $.post('/machine/delete', {
+            'ip': ip,
+        }, function (data, status) {
+            $btn.button('reset');
+            console.log(data)
+            if (data.success) {
+                toastr.success('Delete '+ ip + ' success!')
+            } else {
+                toastr.error(data.message)
+            }
+        });
+    });
+
 });

@@ -28,20 +28,26 @@
 
             <!-- /.box-header -->
             <div class="box-body">
-                <table class="table table-bordered">
+                <table class="table table-bordered" id="MachineListTable">
                     <tbody>
                     <tr>
+                        <th style="width: 40px">Machine Key</th>
                         <th style="width: 40px">Machine Id</th>
                         <th style="width: 40px">Machine IP</th>
                         <th style="width: 40px">Create Time</th>
                         <th style="width: 40px">Update Time</th>
+                        <th style="width: 40px">Operation</th>
                     </tr>
-                    {{ range $v := .machines}}
+                    {{ range $item := .machinesItems}}
                     <tr>
-                        <td>{{ $v.id}}</td>
-                        <td>{{ $v.ip}}</td>
-                        <td>{{ $v.created_timestamp | formatDate }}</td>
-                        <td>{{ $v.updated_timestamp | formatDate }}</td>
+                        <td>{{ $item.Key}}</td>
+                        <td>{{ $item.Id}}</td>
+                        <td>{{ $item.Ip}}</td>
+                        <td>{{ $item.FormatCreatedTime }}</td>
+                        <td>{{ $item.FormatUpdatedTime }}</td>
+                        <td>
+                            <button class="btn btn-danger MachineItemDelBtn" autocomplete="off" data-loading-text="Delete..." data-ip="{{ $item.Ip }}">Delete</button>
+                        </td>
                     </tr>
                     {{ end}}
                     </tbody>

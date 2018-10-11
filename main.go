@@ -1,12 +1,13 @@
 package main
 
 import (
+	"github.com/Waitfantasy/unicorn-service/machine"
 	"github.com/gin-gonic/gin"
 	"log"
 )
 
 var Conf *Config
-var etcdService = NewEtcdService(Conf)
+var MachineService *machine.Service
 
 func main() {
 	var (
@@ -14,9 +15,10 @@ func main() {
 	)
 	initFlag()
 	Conf = initConfig()
-	etcdService = NewEtcdService(Conf)
 
-	if err = etcdService.connection(); err != nil {
+	MachineService = machine.NewService(createEtcdClientv3Config(Conf))
+
+	if err = MachineService.EtcdConnection(); err != nil {
 		log.Fatalf("connection etcd error: %v", err)
 	}
 
@@ -28,5 +30,6 @@ func main() {
 	route.GET("/", index())
 	route.GET("/machine/index", machineIndex())
 	route.POST("/machine/store", machineStore())
+	route.POST("/machine/delete", machineDelete())
 	route.Run(":8001")
 }

@@ -3,11 +3,12 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"fmt"
 	"github.com/gin-contrib/multitemplate"
+	"go.etcd.io/etcd/clientv3"
 	"html/template"
 	"io/ioutil"
 	"log"
+	"strings"
 )
 
 func initFlag() {
@@ -29,8 +30,13 @@ func initConfig() *Config {
 	if err = json.Unmarshal(data, config); err != nil {
 		log.Fatalf("the config file can not json.Unmarshal: %v", err)
 	}
-	fmt.Println(config)
 	return config
+}
+
+func createEtcdClientv3Config(c *Config) clientv3.Config{
+	return clientv3.Config{
+		Endpoints: strings.Split(c.Etcd.Cluster, ","),
+	}
 }
 
 func createHTMLRender() multitemplate.Renderer {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 func index() gin.HandlerFunc {
@@ -14,7 +15,7 @@ func index() gin.HandlerFunc {
 
 func machineIndex() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		machines, err := etcdService.GetMachineList()
+		items, err := MachineService.GetMachineItemList()
 		if err != nil {
 			c.HTML(http.StatusOK, "machine/index", gin.H{
 				"message": map[string]string{
@@ -26,19 +27,16 @@ func machineIndex() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println(machines)
-
 		c.HTML(http.StatusOK, "machine/index", gin.H{
-			"machines": machines,
+			"machinesItems": items,
 		})
 	}
 }
 
 func machineStore() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		id := c.PostForm("id")
 		ip := c.PostForm("ip")
-		if data, err := etcdService.PutMachineId(ip, id); err != nil {
+		if item, err := MachineService.PutMachineItem(ip); err != nil {
 			c.JSON(http.StatusOK, map[string]interface{}{
 				"success": false,
 				"code":    0,
@@ -50,10 +48,35 @@ func machineStore() gin.HandlerFunc {
 				"code":    1,
 				"message": "put etcd success.",
 				"data": map[string]string{
-					"id":                id,
-					"ip":                ip,
-					"created_timestamp": formatDate(data["created_timestamp"]),
-					"updated_timestamp": formatDate(data["updated_timestamp"]),
+					"id":                strconv.Itoa(item.Id),
+					"ip":                item.Ip,
+					"created_timestamp": item.FormatCreatedTime(),
+					"updated_timestamp": item.FormatUpdatedTime(),
+				},
+			})
+		}
+	}
+}
+
+func machineDelete() gin.HandlerFunc  {
+	return func(c *gin.Context) {
+		ip := c.PostForm("ip")
+		if item, err := MachineService.DelMachineItem(ip); err != nil {
+			c.JSON(http.StatusOK, map[string]interface{}{
+				"success": false,
+				"code":    0,
+				"message": err.Error(),
+			})
+		} else {
+			c.JSON(http.StatusOK, map[string]interface{}{
+				"success": true,
+				"code":    1,
+				"message": "delete machine success.",
+				"data": map[string]string{
+					"id":                strconv.Itoa(item.Id),
+					"ip":                item.Ip,
+					"created_timestamp": item.FormatCreatedTime(),
+					"updated_timestamp": item.FormatUpdatedTime(),
 				},
 			})
 		}

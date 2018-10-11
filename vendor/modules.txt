@@ -1,4 +1,6 @@
-# github.com/coreos/etcd v3.3.9+incompatible
+# github.com/Waitfantasy/unicorn-service v1.0.1
+github.com/Waitfantasy/unicorn-service/machine
+# github.com/coreos/etcd v3.3.10+incompatible
 github.com/coreos/etcd/auth/authpb
 github.com/coreos/etcd/etcdserver/api/v3rpc/rpctypes
 github.com/coreos/etcd/etcdserver/etcdserverpb
@@ -33,9 +35,9 @@ github.com/modern-go/concurrent
 github.com/modern-go/reflect2
 # github.com/ugorji/go/codec v0.0.0-20180927125128-99ea80c8b19a
 github.com/ugorji/go/codec
-# go.etcd.io/etcd v3.3.9+incompatible
+# go.etcd.io/etcd v3.3.10+incompatible
 go.etcd.io/etcd/clientv3
-# golang.org/x/net v0.0.0-20181005035420-146acd28ed58
+# golang.org/x/net v0.0.0-20180826012351-8a410e7b638d
 golang.org/x/net/context
 golang.org/x/net/trace
 golang.org/x/net/internal/timeseries
