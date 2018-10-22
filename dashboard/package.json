@@ -2,7 +2,7 @@
   "name": "test",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://127.0.0.1:8001/api/v1/",
+  "proxy": "http://127.0.0.1:8001",
   "homepage": ".",
   "dependencies": {
     "@babel/core": "7.1.0",
@@ -38,6 +38,7 @@
     "file-loader": "2.0.0",
     "fs-extra": "7.0.0",
     "html-webpack-plugin": "4.0.0-alpha.2",
+    "http-proxy-middleware": "^0.19.0",
     "identity-obj-proxy": "3.0.0",
     "jest": "23.6.0",
     "jest-pnp-resolver": "1.0.1",
