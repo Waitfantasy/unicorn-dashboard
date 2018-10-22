@@ -3,9 +3,8 @@ package main
 import (
 	"encoding/json"
 	"flag"
-	"github.com/gin-contrib/multitemplate"
+	"fmt"
 	"go.etcd.io/etcd/clientv3"
-	"html/template"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -33,32 +32,33 @@ func initConfig() *Config {
 	return config
 }
 
-func createEtcdClientv3Config(c *Config) clientv3.Config{
+func CreateEtcdV3Client(c *Config) clientv3.Config{
+	fmt.Println(strings.Split(c.Etcd.Cluster, ","))
 	return clientv3.Config{
 		Endpoints: strings.Split(c.Etcd.Cluster, ","),
 	}
 }
 
-func createHTMLRender() multitemplate.Renderer {
-	r := multitemplate.NewRenderer()
-	r.AddFromFiles("index",
-		"./templates/base.html",
-		"./templates/layout/nav.html",
-		"./templates/layout/sidebar.html",
-		"./templates/layout/content-header.html",
-		"./templates/layout/content.html",
-		"./templates/layout/footer.html", )
-
-	r.AddFromFilesFuncs("machine/index",
-		template.FuncMap{
-			"formatMachineIP": formatMachineIP,
-			"formatDate":      formatDate,
-		},
-		"./templates/base.html",
-		"./templates/layout/nav.html",
-		"./templates/layout/sidebar.html",
-		"./templates/layout/footer.html",
-		"./templates/machine/index.html",
-		"./templates/widgets/alter.html",)
-	return r
-}
+//func createHTMLRender() multitemplate.Renderer {
+//	r := multitemplate.NewRenderer()
+//	r.AddFromFiles("index",
+//		"./templates/base.html",
+//		"./templates/layout/nav.html",
+//		"./templates/layout/sidebar.html",
+//		"./templates/layout/content-header.html",
+//		"./templates/layout/content.html",
+//		"./templates/layout/footer.html", )
+//
+//	r.AddFromFilesFuncs("machine/index",
+//		template.FuncMap{
+//			"formatMachineIP": formatMachineIP,
+//			"formatDate":      formatDate,
+//		},
+//		"./templates/base.html",
+//		"./templates/layout/nav.html",
+//		"./templates/layout/sidebar.html",
+//		"./templates/layout/footer.html",
+//		"./templates/machine/index.html",
+//		"./templates/widgets/alter.html",)
+//	return r
+//}

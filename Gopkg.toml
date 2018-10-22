@@ -1,0 +1,8 @@
+ignored = [
+    "github.com/Waitfantasy/unicorn/service/list",
+    "go.etcd.io/etcd/clientv3"
+]
+
+[prune]
+  go-tests = true
+  unused-packages = true
