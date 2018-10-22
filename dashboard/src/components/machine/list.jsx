@@ -3,6 +3,7 @@ import axios from "axios";
 import {Button, Card, Col, Form, Icon, Input, Row, Table, Modal} from 'antd';
 
 const FormItem = Form.Item;
+
 const EditableContext = React.createContext();
 
 const EditableRow = ({form, index, ...props}) => (
@@ -108,19 +109,53 @@ class EditableCell extends React.Component {
     }
 }
 
-class AddForm extends React.Component {
-
-}
+const AddForm = Form.create()(
+    (props) => {
+        const {visible, ip, okDisable, onCancel, onOk, onChange, form} = props;
+        const {getFieldDecorator} = form;
+        return (
+            <Modal
+                okButtonProps={{disabled: okDisable}}
+                visible={visible}
+                title="Add Machine to Etcd"
+                onCancel={onCancel}
+                onOk={onOk}
+            >
+                <Form layout="vertical">
+                    <FormItem
+                        hasFeedback={ip.hasFeedback}
+                        help={ip.help}
+                        validateStatus={ip.validateStatus}
+                        label="ip">
+                        {getFieldDecorator('title', {
+                            rules: [{required: true, message: '请输入收藏的标题!'}],
+                        })(
+                            <Input value={ip.val} onChange={onChange}/>
+                        )}
+                    </FormItem>
+                </Form>
+            </Modal>
+        );
+    }
+);
 
 class MachineList extends Component {
     constructor(props) {
         super(props);
+
         this.state = {
+            ip: {
+                val: "",
+                label: "",
+                help: "",
+                hasFeedback: true,
+                validateStatus: "",
+            },
+            disable: true,
             editing: false,
             visible: false,
             dataSource: []
         };
-
         this.handleDelete = this.handleDelete.bind(this);
         this.handleAdd = this.handleAdd.bind(this);
 
@@ -164,12 +199,6 @@ class MachineList extends Component {
         }];
     }
 
-    handleOk = (e) => {
-        console.log(e);
-        this.setState({
-            visible: false,
-        });
-    };
 
     handleDelete(ip) {
         axios.post('/api/v1/machine/delete', {
@@ -211,7 +240,6 @@ class MachineList extends Component {
     }
 
     handleSave = (row) => {
-
         const newData = [...this.state.dataSource];
         const index = newData.findIndex(item => row.key === item.key);
         const item = newData[index];
@@ -221,10 +249,6 @@ class MachineList extends Component {
         });
         this.setState({dataSource: newData});
     };
-
-    handleChange(pagination, filters, sorter) {
-        console.log(pagination, filters, sorter)
-    }
 
 
     render() {
@@ -256,17 +280,51 @@ class MachineList extends Component {
                 <Row gutter={16}>
                     <Col className="gutter-row" md={24}>
                         <div className="gutter-box">
-                            <Card title="Machine List" bordered={true}>
+                            <Card title="Machine List">
                                 <div style={{marginBottom: "13px"}}>
                                     <Button type="primary" onClick={this.handleAdd}>Add</Button>
-                                    <Modal
-                                        title="Basic Modal"
+                                    <AddForm
+                                        okDisable={this.state.disable}
+                                        ip={this.state.ip}
                                         visible={this.state.visible}
-                                    >
-                                        <p>Some contents...</p>
-                                        <p>Some contents...</p>
-                                        <p>Some contents...</p>
-                                    </Modal>
+                                        onCancel={() => {
+                                            this.setState({
+                                                visible: false,
+                                            });
+                                        }}
+
+                                        onOk={() => {
+                                            if (!this.state.ip.validateStatus) {
+                                                return;
+                                            }
+                                            console.log(this.state.ip)
+                                        }}
+
+                                        onChange={(e) => {
+                                            const ip = e.target.value;
+                                            const reg = /^(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])\.(\d{1,2}|1\d\d|2[0-4]\d|25[0-5])$/;
+                                            if (!reg.test(ip)) {
+                                                this.setState({
+                                                    ip: {
+                                                        label: "error",
+                                                        help: "input ip invalid!",
+                                                        validateStatus: "error",
+                                                        val: e.target.value,
+                                                    },
+                                                    disable: true,
+                                                });
+                                            } else {
+                                                this.setState({
+                                                    ip: {
+                                                        label: "success",
+                                                        validateStatus: "success",
+                                                        val: e.target.value,
+                                                    },
+                                                    disable: false,
+                                                });
+                                            }
+                                        }}
+                                    />
                                 </div>
                                 <Table
                                     bordered
